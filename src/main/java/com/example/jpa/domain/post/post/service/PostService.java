@@ -17,8 +17,6 @@ public class PostService {
         Post post = Post.builder()
                 .title(title)
                 .body(body)
-                .createdDate(LocalDateTime.now())
-                .modifiedDate(LocalDateTime.now())
                 .build();
 
         //2. repository에 넘김 + DB 반영
