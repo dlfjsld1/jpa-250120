@@ -42,7 +42,7 @@ public class PostService {
         Post post = postRepository.findById(id).get();
         post.setTitle(title);
         post.setBody(body);
-        return postRepository.save(post);
+        return post;
     }
 
     public long count() {
