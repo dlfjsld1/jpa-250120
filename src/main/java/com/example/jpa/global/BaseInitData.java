@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 @Configuration
 @RequiredArgsConstructor
@@ -14,6 +15,7 @@ public class BaseInitData {
     private final PostService postService;
 
     @Bean
+    @Order(1) //@Configuration 안에서 존재하는 빈들의 순서 설정
     public ApplicationRunner applicationRunner() {
         return args -> {
             System.out.println("applicationRunner");
@@ -29,4 +31,16 @@ public class BaseInitData {
             System.out.println("Initialized");
         };
     }
+
+    @Bean
+    @Order(2)
+    public ApplicationRunner applicationRunner2() {
+        return args -> {
+            System.out.println("Modify initializing...");
+            Thread.sleep(1000);
+            postService.modify2(1L, "new title", "new body");
+            System.out.println("Modify initialized");
+        };
+    }
 }
+
