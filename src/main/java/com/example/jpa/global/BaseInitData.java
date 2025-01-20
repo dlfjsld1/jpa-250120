@@ -17,12 +17,16 @@ public class BaseInitData {
     public ApplicationRunner applicationRunner() {
         return args -> {
             System.out.println("applicationRunner");
+            //샘플데이터 3개 생성.
+            //데이터 3개가 이미 있으면 패스
+            if(postService.count() >= 3) return;
             Post p1 = postService.write("title1", "body1");
             System.out.println(p1.getId() + "번 포스트가 생성되었습니다.");
             Post p2 = postService.write("title2", "body2");
             System.out.println(p2.getId() + "번 포스트가 생성되었습니다.");
             Post p3 = postService.write("title3", "body3");
             System.out.println(p3.getId() + "번 포스트가 생성되었습니다.");
+            System.out.println("Initialized");
         };
     }
 }

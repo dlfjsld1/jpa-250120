@@ -14,18 +14,21 @@ public class PostService {
 
     public Post write(String title, String body) {
         //1. Post 조립
-        Post post = new Post();
-        //id는 자동생성
-        //post.setId(1L);
-        post.setCreatedDate(LocalDateTime.now());
-        post.setModifiedDate(LocalDateTime.now());
-        post.setTitle(title);
-        post.setBody(body);
+        Post post = Post.builder()
+                .title(title)
+                .body(body)
+                .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
+                .build();
 
         //2. repository에 넘김 + DB 반영
         postRepository.save(post);
 
         return post;
+    }
+
+    public long count() {
+        return postRepository.count();
     }
 
 
