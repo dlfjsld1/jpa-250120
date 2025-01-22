@@ -33,16 +33,23 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    //@Transactional을 쓰면 postRepository.save(post) 같은 걸로 커밋 할 필요 없이 인스턴스 조작만으로 트랜잭션이 된다.
+    //@Transactional을 쓰면 postRepository.save(post) 같은 걸로 커밋 할 필요 없이 객체 조작만으로 트랜잭션이 된다.
     //단, post 객체를 그냥 받아와 조작하는건 안 되고
     //메소드 내에서 직접 찾아서 처리할 때만 작동함!
+    //왜냐하면 repository가 제공하는 기본기능은 자신만의 트랜잭션을 가지고 있다.
+    //db에서 데이터를 가져올 때 JPA 임시 저장소(영속성 컨텍스트)에 스냅샷을 떠놓고 가져온다.
+    //(영속성 컨텍스트는 트랜잭션 기간 동안에만 존재한다. 트랜잭션이 끝나면(commit) 영속성 컨텍스트는 사라짐)
+    //그런데 그냥 post 객체를 받아와 조작하면 스냅샷과 달라지기 때문에
+    //스냅샷과 달라진 부분을 감지하고 업데이트를 해준다.
+    //원래는 findById 하는 부분에서 트랜잭션이 끝나야 하지만,
+    //@Transactional 어노테이션은 이러한 트랜잭션의 범위를 해당 메서드 전체로 확장해준다.
+    //트랜잭션은 더 큰 트랜잭션 안에 편입된다
     //jpa는 자카르타 프레임워크를 사용하나 @Transactional은 예외로 스프링 프레임워크를 사용해야 함
     @Transactional
-    public Post modify2(long id, String title, String body) {
+    public void modify2(long id, String title, String body) {
         Post post = postRepository.findById(id).get();
         post.setTitle(title);
         post.setBody(body);
-        return post;
     }
 
     public long count() {
@@ -52,6 +59,13 @@ public class PostService {
 
     public Optional<Post> findById(long id) {
         return postRepository.findById(id);
+    }
 
+    public void delete(Post post) {
+        postRepository.delete(post);
+    }
+
+    public void deleteById(long id) {
+        postRepository.deleteById(id);
     }
 }
