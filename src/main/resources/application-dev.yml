@@ -6,9 +6,6 @@ spring:
     ansi:
       enabled: always # 콘솔에 ANSI 색상 출력 활성화
 
-  profiles:
-    active: dev
-
   datasource:
     url: jdbc:h2:./db_dev;MODE=MySQL
     username: sa

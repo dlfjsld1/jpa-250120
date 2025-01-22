@@ -33,9 +33,8 @@ public class Comment {
     @Setter(AccessLevel.PRIVATE)
     private LocalDateTime modifiedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-//    @ManyToOne
 //    @JoinColumn(name = "fk_post") //외래키 설정 fk_post라는 컬럼이 생김
+    @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
     // 이 필드가 데이터베이스 컬럼이며, 길이를 100으로 제한

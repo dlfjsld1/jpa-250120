@@ -48,8 +48,9 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String body;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)//comment에 사용됐잖아. 사용하지 않는 쪽이 주인임 즉 포스트가 주인
-    @Builder.Default
+
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Builder.Default//comment에 사용됐잖아. 사용하지 않는 쪽이 주인임 즉 포스트가 주인
     private List<Comment> comments = new ArrayList<>();
 
     public void addComment(Comment comment) {
@@ -58,7 +59,6 @@ public class Post {
     }
 
     public void removeComment(Comment comment) {
-        comment.setPost(null);
         comments.remove(comment);
     }
 
@@ -67,5 +67,13 @@ public class Post {
                 .filter(com -> com.getId() == id)
                 .findFirst();
         opComment.ifPresent(comment -> comments.remove(comment));
+    }
+
+    public void removeAllComments() {
+        comments.forEach(comment -> {
+                comment.setPost(null);
+            });
+
+        comments.clear();
     }
 }
