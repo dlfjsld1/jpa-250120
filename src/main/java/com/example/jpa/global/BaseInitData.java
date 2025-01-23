@@ -75,6 +75,7 @@ public class BaseInitData {
         p1.addTag("JPA");
         p1.addTag("SpringBoot");
         p1.addTag("개발");
+        p1.addTag("개발");
 
 
         Comment c1 = Comment.builder()

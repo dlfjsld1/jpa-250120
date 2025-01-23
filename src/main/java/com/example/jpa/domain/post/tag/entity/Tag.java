@@ -10,10 +10,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EntityListeners(AuditingEntityListener.class)
-public class Tag extends BaseEntity {
-    @Column(length = 100)
-    private String name;
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Tag  {
+
+    @EmbeddedId //@EmbeddedId는
+    private TagId id;
+
+//    @Column(length = 100)
+//    @EqualsAndHashCode.Include
+//    @MapsId("name")
+//    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Include
+    @MapsId("postId")
     private Post post;
 }

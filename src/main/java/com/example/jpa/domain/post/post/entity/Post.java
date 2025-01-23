@@ -3,6 +3,7 @@ package com.example.jpa.domain.post.post.entity;
 import com.example.jpa.domain.member.entity.Member;
 import com.example.jpa.domain.post.comment.entity.Comment;
 import com.example.jpa.domain.post.tag.entity.Tag;
+import com.example.jpa.domain.post.tag.entity.TagId;
 import com.example.jpa.global.entity.BaseEntity;
 import com.example.jpa.global.entity.BaseTime;
 import jakarta.persistence.*;
@@ -13,9 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 // 이 클래스가 JPA 엔티티임을 나타냄
 @Entity
@@ -48,7 +47,7 @@ public class Post extends BaseTime {
 
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default // 이거 안 넣으면 빌더가 new ArrayList<>()된걸 무시함
-    private List<Tag> tags = new ArrayList<>();
+    private List<Tag> tags = new ArrayList();
 
 
     public void addComment(Comment comment) {
@@ -57,16 +56,16 @@ public class Post extends BaseTime {
     }
 
     public void addTag(String name) {
-        Optional<Tag> oldTag = tags.stream()
-                .filter(t -> t.getName().equals(name))
-                .findFirst();
-
-        if (oldTag.isPresent()) {
-            return;
-        }
+//        Optional<Tag> oldTag = tags.stream()
+//                .filter(t -> t.getName().equals(name))
+//                .findFirst();
+//
+//        if (oldTag.isPresent()) {
+//            return;
+//        }
 
         Tag tag = Tag.builder()
-                .name(name)
+                .id(new TagId(this.getId(), name))
                 .post(this)
                 .build();
         tags.add(tag);
