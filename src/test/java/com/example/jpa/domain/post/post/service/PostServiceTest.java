@@ -159,27 +159,63 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("회원 정보로 글 조회" )
-    @Transactional
+    @DisplayName("회원 정보로 글 조회")
     void t11() {
-        //회원 아이디로 회원이 작성한 글 목록 가져오기
-        //SLELECT * FROM post p inner join member m on p.member_id = m.id WHERE username = 'user1';
 
-        //post에서 member 정보가 필요할 때 방법
-        //1. post를 먼저 조회해서 member id를 알아온 후 -> member 조회 -> select 2번 조회
-        //2. post랑 member를 붙여서 같이 조회 -> join
+        // 회원 아이디로 회원이 작성한 글 목록 가져오기
+        // SELECT * FROM post p WHERE INNER JOIN member m ON p.member_id = m.id where username = 'user1';
 
-        //대부분의 경우 JPA는 연관된 정보를 가져올 때 select를 여러번 날린다
-        List<Post> posts = postService.findByAuthorUsername("user1"); //객체 Author가 가지고 있는 username이 user1인거
-        Post post = posts.get(0);
-        System.out.println(post.getId() + ", " + post.getTitle());
-        System.out.println(post.getAuthor().getUsername());
+        // post에서 member 정보가 필요할 때 방법
+        // 1. post를 먼저 조회해서 member id를 알아온 후 -> member 조회 -> select 2번 조회
+        // 2. post랑 member를 붙여서 같이 조회 -> join
+
+//        Member user1 = memberService.findByUsername("user1").get();
+        List<Post> posts = postService.findByAuthorUsername("user1");
+
+        assertThat(posts.size()).isEqualTo(2);
+
     }
 
     @Test
-    @DisplayName("글목록에서 회원 정보 가져오기" )
+    @DisplayName("회원 정보로 글 조회2")
     @Transactional
     void t12() {
+
+        // 회원 아이디로 회원이 작성한 글 목록 가져오기
+        // SELECT * FROM post p WHERE INNER JOIN member m ON p.member_id = m.id where username = 'user1';
+
+        // post에서 member 정보가 필요할 때 방법
+        // 1. post를 먼저 조회해서 member id를 알아온 후 -> member 조회 -> select 2번 조회
+        // 2. post랑 member를 붙여서 같이 조회 -> join
+
+        // 대부분의 경우 JPA는 연관된 정보를 가져올 때 select를 여러번 날린다.
+
+        List<Post> posts = postService.findByAuthorUsername("user1");
+        Post post = posts.get(0);
+
+        System.out.println(post.getId() + ", " + post.getTitle());
+        System.out.println(post.getAuthor().getUsername());
+
+    }
+
+    @Test
+    @DisplayName("글목록에서 회원 정보 가져오기 -> N + 1" )
+    @Transactional
+    void t13() {
+        //이렇게 하나하나 불러오는 방식의 문제점은 N+1 문제가 발생한다는 것이다.
+        //N + 1 문제란 1개의 쿼리를 실행했을 때 의도하지 않은 N개의 쿼리가 추가적으로 실행되는 것을 의미한다.
+
+        // post에서 member 정보가 필요할 때 방법
+        // 1. post를 먼저 조회해서 member id를 알아온 후 -> member 조회 -> select 2번 조회
+        // 2. post랑 member를 붙여서 같이 조회 -> fetch join -> jpql 사용(설정이 복잡하다)
+        // 3. select * from post where member_id = 1 -> 1번 조회
+        // 4. select * from post where member_id = 2 -> 2번 조회
+        // 5. select * from post where member_id = 3 -> 3번 조회
+        // ...
+        // 100. select * from post where member_id = 100 -> 100번 조회
+
+        //select * from post where member_id in (1, 2, 3, ..., 100);
+        //select * from post where member_id in(?, ?, ?, ?);
         List<Post> posts = postService.findAll(); //객체 Author가 가지고 있는 username이 user1인거
         for(Post post:posts) {
             System.out.println(post.getId() + ", " + post.getTitle() + ", " + post.getAuthor().getNickname());

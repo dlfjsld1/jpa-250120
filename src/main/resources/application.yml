@@ -24,6 +24,7 @@ spring:
         format_sql: true # SQL 쿼리 포맷팅
         highlight_sql: true # SQL 쿼리 하이라이트
         use_sql_comments: true # SQL 쿼리에 주석 추가
+        defualt_batch_fetch_size: 10 # 배치 처리 시 한 번에 가져올 데이터의 수
 
 logging:
   level:
