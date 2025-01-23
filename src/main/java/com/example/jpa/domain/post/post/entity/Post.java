@@ -1,5 +1,6 @@
 package com.example.jpa.domain.post.post.entity;
 
+import com.example.jpa.domain.member.entity.Member;
 import com.example.jpa.domain.post.comment.entity.Comment;
 import jakarta.persistence.*;
 import lombok.*;
@@ -52,6 +53,10 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Builder.Default//comment에 사용됐잖아. 사용하지 않는 쪽이 주인임 즉 포스트가 주인
     private List<Comment> comments = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member author;
+
 
     public void addComment(Comment comment) {
         comments.add(comment);

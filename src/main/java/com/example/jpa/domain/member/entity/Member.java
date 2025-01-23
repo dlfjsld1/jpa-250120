@@ -1,6 +1,5 @@
-package com.example.jpa.domain.post.comment.entity;
+package com.example.jpa.domain.member.entity;
 
-import com.example.jpa.domain.member.entity.Member;
 import com.example.jpa.domain.post.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,11 +16,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)// 이 엔티티에 대한 Auditing(자동으로 값 매핑) 기능을 활성화
-public class Comment {
+public class Member {
 
     // 이 필드가 엔티티의 기본 키임을 나타냄
-    @Id
-    // 기본 키 생성 전략을 IDENTITY로 설정 (데이터베이스가 자동으로 생성)
+    @Id // 기본 키 생성 전략을 IDENTITY로 설정 (데이터베이스가 자동으로 생성)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.PRIVATE)
     private Long id; //long -> null이 없다. Long -> 객체타입은 null이 가능함
@@ -34,15 +32,12 @@ public class Comment {
     @Setter(AccessLevel.PRIVATE)
     private LocalDateTime modifiedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member author;
+    @Column(length = 100, unique = true)
+    private String username;
 
-//    @JoinColumn(name = "fk_post") //외래키 설정 fk_post라는 컬럼이 생김
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Post post;
+    @Column(length = 100)
+    private String password;
 
-    // 이 필드가 데이터베이스 컬럼이며, 길이를 100으로 제한
-    // 이 필드가 데이터베이스 컬럼이며, 컬럼 타입을 TEXT로 설정
-    @Column(columnDefinition = "TEXT")
-    private String body;
+    @Column(length = 100)
+    private String nickname;
 }

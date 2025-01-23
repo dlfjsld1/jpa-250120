@@ -1,5 +1,6 @@
 package com.example.jpa.domain.post.comment.service;
 
+import com.example.jpa.domain.member.entity.Member;
 import com.example.jpa.domain.post.comment.entity.Comment;
 import com.example.jpa.domain.post.comment.repository.CommentRepository;
 import com.example.jpa.domain.post.post.entity.Post;
@@ -13,9 +14,10 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public Comment write(Post post, String body) {
+    public Comment write(Member author, Post post, String body) {
 
         Comment comment = Comment.builder()
+                .author(author)
                 .post(post)
                 .body(body)
                 .build();
