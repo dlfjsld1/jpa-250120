@@ -2,7 +2,9 @@ package com.example.jpa.domain.post.post.entity;
 
 import com.example.jpa.domain.member.entity.Member;
 import com.example.jpa.domain.post.comment.entity.Comment;
+import com.example.jpa.domain.post.tag.entity.Tag;
 import com.example.jpa.global.entity.BaseEntity;
+import com.example.jpa.global.entity.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,7 +27,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Post extends BaseEntity {
+public class Post extends BaseTime {
 
     // 이 필드가 데이터베이스 컬럼이며, 길이를 100으로 제한
     @Column(length = 100)
@@ -44,27 +46,29 @@ public class Post extends BaseEntity {
     private Member author;
 
 
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @Builder.Default // 이거 안 넣으면 빌더가 new ArrayList<>()된걸 무시함
+    private List<Tag> tags = new ArrayList<>();
+
+
     public void addComment(Comment comment) {
         comments.add(comment);
         comment.setPost(this);
     }
 
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
-    }
-
-    public void removeComment(long id) {
-        Optional<Comment> opComment = comments.stream()
-                .filter(com -> com.getId() == id)
+    public void addTag(String name) {
+        Optional<Tag> oldTag = tags.stream()
+                .filter(t -> t.getName().equals(name))
                 .findFirst();
-        opComment.ifPresent(comment -> comments.remove(comment));
-    }
 
-    public void removeAllComments() {
-        comments.forEach(comment -> {
-                comment.setPost(null);
-            });
+        if (oldTag.isPresent()) {
+            return;
+        }
 
-        comments.clear();
+        Tag tag = Tag.builder()
+                .name(name)
+                .post(this)
+                .build();
+        tags.add(tag);
     }
 }
